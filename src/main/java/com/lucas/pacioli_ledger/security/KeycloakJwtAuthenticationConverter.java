@@ -1,5 +1,6 @@
 package com.lucas.pacioli_ledger.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,8 +15,10 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 @Component
-public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+public class KeycloakJwtAuthenticationConverter
+        implements Converter<Jwt, AbstractAuthenticationToken> {
 
     private static final String API_CLIENT_ID = "pacioli-api";
     private static final String RESOURCE_ACCESS_CLAIM = "resource_access";
@@ -31,6 +34,11 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
 
         authorities.addAll(extractScopeAuthorities(jwt));
         authorities.addAll(extractClientRoles(jwt));
+
+        log.debug(
+                "JWT authorities converted successfully. Total authorities: {}",
+                authorities.size()
+        );
 
         return new JwtAuthenticationToken(jwt, authorities, jwt.getSubject());
     }

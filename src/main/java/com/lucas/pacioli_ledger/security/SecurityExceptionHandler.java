@@ -3,6 +3,7 @@ package com.lucas.pacioli_ledger.security;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class SecurityExceptionHandler implements AuthenticationEntryPoint, AccessDeniedHandler {
 
@@ -29,6 +31,13 @@ public class SecurityExceptionHandler implements AuthenticationEntryPoint, Acces
             HttpServletResponse response,
             AuthenticationException exception
     ) throws IOException, ServletException {
+
+        log.warn(
+                "Authentication failed: {} {} - {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                exception.getClass().getSimpleName()
+        );
 
         bearerEntryPoint.commence(request, response, exception);
 
@@ -47,6 +56,12 @@ public class SecurityExceptionHandler implements AuthenticationEntryPoint, Acces
             HttpServletResponse response,
             AccessDeniedException exception
     ) throws IOException, ServletException {
+
+        log.warn(
+                "Access denied: {} {}",
+                request.getMethod(),
+                request.getRequestURI()
+        );
 
         bearerDeniedHandler.handle(request, response, exception);
 
