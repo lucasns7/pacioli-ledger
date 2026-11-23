@@ -4,6 +4,7 @@ import com.lucas.pacioli_ledger.identity.domain.User;
 import com.lucas.pacioli_ledger.identity.domain.UserRepository;
 import com.lucas.pacioli_ledger.shared.domain.id.UserID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +14,7 @@ import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CurrentUserService {
 
     private final UserRepository repository;
@@ -47,6 +49,8 @@ public class CurrentUserService {
         var user = new User(subject, name, email);
 
         repository.save(user);
+
+        log.info("User provisioned successfully. UserID: {}", user.getId());
 
         return user.getId();
     }
