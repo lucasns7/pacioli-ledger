@@ -38,5 +38,24 @@ services:
       keycloak-db:
         condition: service_healthy
 
+  pacioli-db:
+    image: postgres:16
+    container_name: pacioli-app-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PACIOLI_DB}
+      POSTGRES_USER: ${PACIOLI_DB_USER}
+      POSTGRES_PASSWORD: ${PACIOLI_DB_PASSWORD}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - pacioli-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${PACIOLI_DB_USER} -d ${PACIOLI_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   keycloak-db-data:
+  pacioli-db-data:
